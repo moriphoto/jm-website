@@ -1,0 +1,41 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: images/studio
+public_folder: /images/studio
+
+site_url: https://gweek.netlify.app
+display_url: https://gweek.netlify.app
+logo_url: /images/mark-jm.png
+
+locale: en-gb
+
+collections:
+  - name: catalogue
+    label: Catalogue
+    files:
+      - name: works
+        label: Pieces and collection
+        file: data/works.json
+        fields:
+          - { name: collection_name, label: Collection name, widget: string, hint: "e.g. Gweek 2026" }
+          - name: pieces
+            label: Pieces
+            widget: list
+            summary: "{{title}} — {{id}}"
+            fields:
+              - { name: id, label: ID, widget: string, hint: "00 is the opening group shot. Then 01, 02…" }
+              - { name: title, label: Title, widget: string }
+              - { name: note, label: Description, widget: text }
+              - { name: price, label: Price, widget: string, required: false, default: "On request" }
+              - { name: src, label: Image, widget: image }
+
+  - name: pages
+    label: Page copy
+    files:
+      - name: courses_note
+        label: How to use this admin
+        file: data/admin-help.md
+        fields:
+          - { name: body, label: Notes, widget: markdown }

@@ -1,0 +1,12 @@
+John Mackenzie Ceramics — studio ground (repeat for every pot)
+
+Frame: 1920 x 1080 landscape (1080p).
+Action: cut the ceramic object from the photograph. Do not restyle, reshape, retexture or recolour the pot. Keep glaze, ash, cracks and reflections exactly as shot.
+Background: remove the original ground. Place the pot centred on a smooth vertical gradient — deep black at the top, charcoal in the middle, pure white at the foot.
+Shadow: one soft contact shadow on the white only.
+Nothing else: no props, type, border or extra objects.
+Look: clean catalogue, slight pop, original clay.
+
+Prompt to paste into Imagine / edit:
+
+Product photograph for a ceramics catalogue. Isolate the ceramic vessel exactly as it appears — do not restyle, reshape, retexture, recolor, or invent damage. Keep every glaze run, ash deposit, chip and reflection original. Remove the existing background completely. Place the unaltered pot centered in a 1920 by 1080 landscape frame on a smooth vertical studio gradient: deep black at the top, through charcoal mid-tone, to clean pure white at the bottom. Soft natural contact shadow on the white ground only. No props, no text, no border, no extra objects. Clean, sharp, catalogue lighting. Slight clarity so the pot reads with a quiet pop against the gradient.
