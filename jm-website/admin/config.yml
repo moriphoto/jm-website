@@ -2,11 +2,11 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: images/studio
+media_folder: jm-website/images/studio
 public_folder: /images/studio
 
-site_url: https://gweek.netlify.app
-display_url: https://gweek.netlify.app
+site_url: https://jmceramics.netlify.app
+display_url: https://jmceramics.netlify.app
 logo_url: /images/mark-jm.png
 
 locale: en-gb
@@ -17,7 +17,7 @@ collections:
     files:
       - name: works
         label: Pieces and collection
-        file: data/works.json
+        file: jm-website/data/works.json
         fields:
           - { name: collection_name, label: Collection name, widget: string, hint: "e.g. Gweek 2026" }
           - name: pieces
@@ -25,17 +25,33 @@ collections:
             widget: list
             summary: "{{title}} — {{id}}"
             fields:
-              - { name: id, label: ID, widget: string, hint: "00 is the opening group shot. Then 01, 02…" }
+              - { name: id, label: ID, widget: string, hint: "00 is the group shot. Next unused number for a new pot (22 after 21)." }
               - { name: title, label: Title, widget: string }
               - { name: note, label: Description, widget: text }
               - { name: price, label: Price, widget: string, required: false, default: "On request" }
               - { name: src, label: Image, widget: image }
+              - { name: archived, label: Archive (hide from public site), widget: boolean, default: false, required: false }
 
   - name: pages
-    label: Page copy
+    label: Pages
     files:
-      - name: courses_note
-        label: How to use this admin
-        file: data/admin-help.md
+      - name: copy
+        label: About, Enquire, Courses
+        file: jm-website/data/pages.json
         fields:
-          - { name: body, label: Notes, widget: markdown }
+          - { name: about_lead, label: About — opening line, widget: text }
+          - { name: about_p1, label: About — paragraph 1, widget: text }
+          - { name: about_p2, label: About — paragraph 2, widget: text }
+          - { name: kiln_p1, label: Gweek kiln — paragraph 1, widget: text }
+          - { name: kiln_quote, label: Gweek kiln — quote, widget: text }
+          - { name: kiln_p2, label: Gweek kiln — paragraph 2, widget: text }
+          - { name: enquire_intro, label: Enquire — introduction, widget: text }
+          - { name: courses_lead, label: Courses — opening line, widget: text }
+          - { name: courses_p1, label: Courses — paragraph 1, widget: text }
+          - { name: courses_p2, label: Courses — paragraph 2, widget: text }
+          - { name: courses_dates, label: Courses — dates (one per line), widget: text }
+      - name: help
+        label: How to use this admin
+        file: jm-website/data/admin-help.md
+        fields:
+          - { name: body, label: Tutorial, widget: markdown }
