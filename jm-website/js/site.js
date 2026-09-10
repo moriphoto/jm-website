@@ -212,26 +212,38 @@
     });
   }
 
+  function applyPages(p) {
+    if (!p) return;
+    document.querySelectorAll("[data-copy]").forEach(function (el) {
+      var key = el.getAttribute("data-copy");
+      if (p[key]) el.textContent = p[key];
+    });
+    var dates = document.getElementById("courses-dates");
+    if (dates && p.courses_dates) {
+      dates.innerHTML = p.courses_dates.split("\n").filter(Boolean).map(function (line) {
+        return "<li>" + line.replace(/</g, "") + "</li>";
+      }).join("");
+    }
+  }
+
   function start() {
+    fetch("data/pages.json").then(function (r) { return r.json(); }).then(applyPages).catch(function () {});
     buildGrid();
     drawTable();
     render(0);
     showViewer();
   }
 
-  if (works.length) {
-    start();
-  } else {
-    fetch("data/works.json")
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        works = (data && data.pieces) ? data.pieces : [];
-        window.WORKS = works;
-        start();
-      })
-      .catch(function () {
-        works = [];
-        start();
-      });
-  }
+  fetch("data/works.json")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var raw = (data && data.pieces) ? data.pieces : works;
+      works = raw.filter(function (w) { return !w.archived; });
+      window.WORKS = works;
+      start();
+    })
+    .catch(function () {
+      works = (window.WORKS || []).filter(function (w) { return !w.archived; });
+      start();
+    });
 })();
