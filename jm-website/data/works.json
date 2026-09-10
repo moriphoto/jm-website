@@ -154,6 +154,14 @@
       "title": "Two plates",
       "note": "Hakeme and iron on a pale ground.",
       "price": "On request"
+    },
+    {
+      "price": "On request",
+      "archived": false,
+      "src": "/images/studio/07-three-cups.jpg",
+      "title": "3 cups",
+      "note": "3x glazed plates",
+      "id": "23"
     }
   ]
 }
