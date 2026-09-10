@@ -20,6 +20,7 @@
 
   function hideAll() {
     Object.values(pages).forEach(function (el) {
+      if (!el) return;
       el.classList.remove("open");
       el.style.display = "none";
     });
@@ -50,12 +51,22 @@
     }
     setActive("courses");
   }
+  function setIndexOpen(open) {
+    var wrap = document.getElementById("index");
+    var btn = document.getElementById("index-toggle");
+    if (!wrap || !btn) return;
+    wrap.hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.classList.toggle("open", !!open);
+  }
   function showEnquire() {
     hideAll();
     enquire.style.display = "block";
     enquire.classList.add("open");
     setActive("enquire");
     drawTable();
+    var hasPicks = Object.keys(basket).some(function (id) { return (basket[id] || 0) > 0; });
+    setIndexOpen(hasPicks);
   }
   function setActive(name) {
     document.querySelectorAll("[data-nav]").forEach(function (el) {
@@ -97,6 +108,7 @@
     if (!tb) return;
     tb.innerHTML = "";
     works.forEach(function (w) {
+      if (w.id === "00") return;
       const qty = basket[w.id] || 0;
       const tr = document.createElement("tr");
       if (qty) tr.className = "picked";
@@ -117,7 +129,7 @@
     });
   }
   function selectedLines() {
-    return works.filter(function (w) { return (basket[w.id] || 0) > 0; })
+    return works.filter(function (w) { return w.id !== "00" && (basket[w.id] || 0) > 0; })
       .map(function (w) { return (basket[w.id] || 0) + " × " + w.title + " (" + w.price + ")"; });
   }
   function buildGrid() {
@@ -137,7 +149,11 @@
     addBtn.addEventListener("click", function () { addCurrent(); showEnquire(); });
   }
   document.querySelectorAll("[data-nav='grid']").forEach(function (el) {
-    el.addEventListener("click", function (e) { e.preventDefault(); if (archiveMode) setMode(false); showGrid(); });
+    el.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (archiveMode) setMode(false);
+      showGrid();
+    });
   });
   document.querySelectorAll("[data-nav='about']").forEach(function (el) {
     el.addEventListener("click", function (e) { e.preventDefault(); showAbout(); });
@@ -154,6 +170,13 @@
   document.querySelectorAll("[data-nav='archive']").forEach(function (el) {
     el.addEventListener("click", function (e) { e.preventDefault(); setMode(true); showGrid(); });
   });
+  var indexToggle = document.getElementById("index-toggle");
+  if (indexToggle) {
+    indexToggle.addEventListener("click", function () {
+      var wrap = document.getElementById("index");
+      setIndexOpen(wrap && wrap.hidden);
+    });
+  }
   document.addEventListener("keydown", function (e) {
     const tag = (e.target && e.target.tagName) || "";
     if (tag === "INPUT" || tag === "TEXTAREA") return;
