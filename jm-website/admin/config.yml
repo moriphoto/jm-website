@@ -2,8 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: jm-website/images/studio
-public_folder: /images/studio
+media_folder: jm-website/images
+public_folder: /images
 
 site_url: https://jmceramics.netlify.app
 display_url: https://jmceramics.netlify.app
@@ -19,18 +19,33 @@ collections:
         label: Pieces and collection
         file: jm-website/data/works.json
         fields:
-          - { name: collection_name, label: Collection name, widget: string, hint: "e.g. Gweek 2026" }
+          - { name: collection_name, label: Collection name, widget: string }
           - name: pieces
             label: Pieces
             widget: list
             summary: "{{title}} — {{id}}"
             fields:
-              - { name: id, label: ID, widget: string, hint: "00 is the group shot. Next unused number for a new pot (22 after 21)." }
+              - { name: id, label: ID, widget: string }
               - { name: title, label: Title, widget: string }
               - { name: note, label: Description, widget: text }
               - { name: price, label: Price, widget: string, required: false, default: "On request" }
               - { name: src, label: Image, widget: image }
               - { name: archived, label: Archive (hide from public site), widget: boolean, default: false, required: false }
+
+  - name: assets
+    label: Assets
+    files:
+      - name: site_assets
+        label: Splash, collection, About pictures
+        file: jm-website/data/assets.json
+        fields:
+          - { name: splash_video, label: Splash film (mp4), widget: file }
+          - { name: splash_poster, label: Splash still, widget: image }
+          - { name: collection, label: Opening group shot, widget: image }
+          - { name: about_john, label: About — John at the kiln, widget: image }
+          - { name: about_ports, label: About — side ports, widget: image }
+          - { name: about_firebox, label: About — firebox, widget: image }
+          - { name: about_shed, label: About — night firing, widget: image }
 
   - name: pages
     label: Pages
