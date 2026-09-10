@@ -48,7 +48,8 @@
       "src": "images/studio/06-tea-bowl.jpg",
       "title": "Tea bowl",
       "note": "Pale celadon with copper blush.",
-      "price": "On request"
+      "price": "On request",
+      "archived": true
     },
     {
       "id": "07",
