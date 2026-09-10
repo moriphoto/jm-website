@@ -31,7 +31,7 @@
       <a href="#" data-nav="about">About</a>
       <a href="#" data-nav="courses">Courses</a>
       <a href="#" data-nav="enquire">Enquire</a>
-      <button type="button" class="archive-btn" data-nav="archive" title="Archive" aria-label="Archive">A</button>
+      <button type="button" class="archive-btn" data-nav="archive" title="Archive" aria-label="Archive">ARV</button>
     </nav>
   </header>
   <div class="lockup" id="lockup">
@@ -123,9 +123,15 @@
     <div class="page-inner">
       <h1>Enquire</h1>
       <div class="rule"></div>
-      <p data-copy="enquire_intro">These are one-off pieces from the kiln.</p>
-      <p class="index-link"><a href="#index">Index of pots</a></p>
-      <div class="basket-wrap" id="index">
+      <p data-copy="enquire_intro">These are one-off pieces from the kiln. Add a pot while you look, or open the index below. Quantities are a note, not a shop. Price is on request until John confirms.</p>
+      <button type="button" class="index-toggle" id="index-toggle" aria-expanded="false" aria-controls="index">
+        <span class="index-toggle-copy">
+          <span class="index-toggle-label">Index of pots</span>
+          <span class="index-toggle-hint">Click to open the list and mark a quantity</span>
+        </span>
+        <span class="index-toggle-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="basket-wrap" id="index" hidden>
         <table class="enquire-table" id="enquire-table">
           <thead><tr><th></th><th>Piece</th><th>Price</th><th>Qty</th></tr></thead>
           <tbody></tbody>
@@ -137,9 +143,10 @@
         <label for="email">Email</label>
         <input id="email" name="email" type="email" required>
         <label for="message">Message</label>
-        <textarea id="message" name="message" rows="5"></textarea>
+        <textarea id="message" name="message" rows="5" placeholder="A general enquiry is enough if you have not chosen a piece."></textarea>
         <button class="btn" type="submit">Send enquiry</button>
       </form>
+      <p class="note">Studio: johnmceramics@gmail.com · <a href="https://www.jmmackenzie.co.uk/">jmmackenzie.co.uk</a></p>
       <p id="form-status"></p>
     </div>
   </section>
