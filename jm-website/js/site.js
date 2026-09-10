@@ -1,5 +1,7 @@
 (function () {
-  let works = window.WORKS || [];
+  let allPieces = window.WORKS || [];
+  let works = allPieces.filter(function (w) { return !w.archived; });
+  let archiveMode = false;
   let index = 0;
   const basket = {};
   const hero = document.getElementById("hero");
@@ -26,13 +28,13 @@
   function showViewer() {
     hideAll();
     viewer.style.display = "block";
-    setActive("work");
+    setActive(archiveMode ? "archive" : "work");
   }
   function showGrid() {
     hideAll();
     grid.style.display = "block";
     grid.classList.add("open");
-    setActive("grid");
+    setActive(archiveMode ? "archive" : "grid");
   }
   function showAbout() {
     hideAll();
@@ -65,9 +67,7 @@
     var onHome = viewer.style.display === "block" && works[index] && works[index].id === "00";
     document.body.classList.toggle("intro", !!onHome);
   }
-
   function current() { return works[index]; }
-
   function render(i) {
     if (!works.length) return;
     index = (i + works.length) % works.length;
@@ -84,18 +84,14 @@
     if (addBtn) addBtn.classList.toggle("on", (basket[w.id] || 0) > 0);
     setIntro();
   }
-
   function addCurrent() {
     const w = current();
     if (!w) return;
     basket[w.id] = (basket[w.id] || 0) + 1;
     if (addBtn) addBtn.classList.add("on");
     addBtn.textContent = "Added — view enquiry";
-    setTimeout(function () {
-      addBtn.textContent = "Enquire about this piece";
-    }, 1400);
+    setTimeout(function () { addBtn.textContent = "Enquire about this piece"; }, 1400);
   }
-
   function drawTable() {
     const tb = document.querySelector("#enquire-table tbody");
     if (!tb) return;
@@ -120,12 +116,10 @@
       });
     });
   }
-
   function selectedLines() {
     return works.filter(function (w) { return (basket[w.id] || 0) > 0; })
       .map(function (w) { return (basket[w.id] || 0) + " × " + w.title + " (" + w.price + ")"; });
   }
-
   function buildGrid() {
     tiles.innerHTML = "";
     works.forEach(function (w, i) {
@@ -133,24 +127,17 @@
       b.className = "tile";
       b.type = "button";
       b.innerHTML = "<img src=\"" + w.src + "\" alt=\"" + w.title + "\"><span>" + w.title + "</span>";
-      b.addEventListener("click", function () {
-        render(i);
-        showViewer();
-      });
+      b.addEventListener("click", function () { render(i); showViewer(); });
       tiles.appendChild(b);
     });
   }
-
   document.getElementById("prev").addEventListener("click", function () { render(index - 1); });
   document.getElementById("next").addEventListener("click", function () { render(index + 1); });
   if (addBtn) {
-    addBtn.addEventListener("click", function () {
-      addCurrent();
-      showEnquire();
-    });
+    addBtn.addEventListener("click", function () { addCurrent(); showEnquire(); });
   }
   document.querySelectorAll("[data-nav='grid']").forEach(function (el) {
-    el.addEventListener("click", function (e) { e.preventDefault(); showGrid(); });
+    el.addEventListener("click", function (e) { e.preventDefault(); if (archiveMode) setMode(false); showGrid(); });
   });
   document.querySelectorAll("[data-nav='about']").forEach(function (el) {
     el.addEventListener("click", function (e) { e.preventDefault(); showAbout(); });
@@ -162,9 +149,11 @@
     el.addEventListener("click", function (e) { e.preventDefault(); showEnquire(); });
   });
   document.querySelectorAll("[data-nav='work']").forEach(function (el) {
-    el.addEventListener("click", function (e) { e.preventDefault(); showViewer(); });
+    el.addEventListener("click", function (e) { e.preventDefault(); setMode(false); showViewer(); });
   });
-
+  document.querySelectorAll("[data-nav='archive']").forEach(function (el) {
+    el.addEventListener("click", function (e) { e.preventDefault(); setMode(true); showGrid(); });
+  });
   document.addEventListener("keydown", function (e) {
     const tag = (e.target && e.target.tagName) || "";
     if (tag === "INPUT" || tag === "TEXTAREA") return;
@@ -173,7 +162,6 @@
     if (e.key === "g" || e.key === "G") showGrid();
     if (e.key === "Escape") showGrid();
   });
-
   const form = document.getElementById("enquire-form");
   const status = document.getElementById("form-status");
   if (form) {
@@ -194,16 +182,10 @@
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload)
       }).then(function (r) { return r.json(); })
-        .then(function () {
-          status.innerHTML = "Sent to moriphoto@gmail.com.";
-          form.reset();
-        })
-        .catch(function () {
-          status.innerHTML = "Could not send from this page. Write to moriphoto@gmail.com.";
-        });
+        .then(function () { status.innerHTML = "Sent to moriphoto@gmail.com."; form.reset(); })
+        .catch(function () { status.innerHTML = "Could not send from this page. Write to moriphoto@gmail.com."; });
     });
   }
-
   var enter = document.getElementById("enter");
   if (enter) {
     enter.addEventListener("click", function () {
@@ -211,7 +193,18 @@
       showViewer();
     });
   }
-
+  function setMode(archive) {
+    archiveMode = !!archive;
+    document.body.classList.toggle("archive-mode", archiveMode);
+    works = allPieces.filter(function (w) {
+      if (w.id === "00") return !archiveMode;
+      return archiveMode ? !!w.archived : !w.archived;
+    });
+    index = 0;
+    buildGrid();
+    drawTable();
+    if (works.length) render(0);
+  }
   function applyPages(p) {
     if (!p) return;
     document.querySelectorAll("[data-copy]").forEach(function (el) {
@@ -225,7 +218,6 @@
       }).join("");
     }
   }
-
   function start() {
     fetch("data/pages.json").then(function (r) { return r.json(); }).then(applyPages).catch(function () {});
     buildGrid();
@@ -233,17 +225,17 @@
     render(0);
     showViewer();
   }
-
   fetch("data/works.json")
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      var raw = (data && data.pieces) ? data.pieces : works;
-      works = raw.filter(function (w) { return !w.archived; });
-      window.WORKS = works;
+      allPieces = (data && data.pieces) ? data.pieces : allPieces;
+      window.WORKS = allPieces;
+      works = allPieces.filter(function (w) { return !w.archived; });
       start();
     })
     .catch(function () {
-      works = (window.WORKS || []).filter(function (w) { return !w.archived; });
+      allPieces = window.WORKS || [];
+      works = allPieces.filter(function (w) { return !w.archived; });
       start();
     });
 })();
