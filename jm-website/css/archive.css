@@ -1,0 +1,12 @@
+.archive-btn {
+  width: 22px; height: 22px; padding: 0;
+  font-size: 12px; font-weight: 700; letter-spacing: 0;
+  color: #3d6a9a;
+  border: 1px solid #3d6a9a;
+  border-radius: 50%;
+  line-height: 20px;
+  text-align: center;
+  opacity: .55;
+}
+.archive-btn:hover, .archive-btn.on { opacity: 1; color: #7eb0e0; border-color: #7eb0e0; }
+body.archive-mode .kicker::after { content: " · Archive"; }
