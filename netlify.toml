@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/jm-website/:splat"
+  status = 200
+  force = true
