@@ -17,8 +17,8 @@
     },
     {
       "id": "02",
-      "src": "images/studio/02-fluted-vessel.jpg",
-      "title": "Fluted vessel",
+      "src": "/images/D2E3EA33-D7AA-49DB-8A6D-92905B94B5E8_1_.JPG",
+      "title": "god knows not much ",
       "note": "Ash and iron on a vertically carved wall.",
       "price": "On request"
     },
@@ -87,17 +87,17 @@
       "price": "On request"
     },
     {
-      "id": "12",
-      "src": "images/studio/12-ash-bottle.jpg",
-      "title": "Bottle",
-      "note": "Raw clay against heavy natural ash.",
-      "price": "On request"
-    },
-    {
       "id": "13",
       "src": "images/studio/13-sphere-shell.jpg",
       "title": "Sphere",
       "note": "Shell print and copper blush.",
+      "price": "On request"
+    },
+    {
+      "id": "12",
+      "src": "images/studio/12-ash-bottle.jpg",
+      "title": "Bottle",
+      "note": "Raw clay against heavy natural ash.",
       "price": "On request"
     },
     {
