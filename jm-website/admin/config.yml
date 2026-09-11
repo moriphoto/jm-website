@@ -36,7 +36,7 @@ collections:
     label: Assets
     files:
       - name: site_assets
-        label: Splash, collection, About pictures
+        label: Splash, collection, About, Courses pictures
         file: jm-website/data/assets.json
         fields:
           - { name: splash_video, label: Splash film (mp4), widget: file }
@@ -46,6 +46,14 @@ collections:
           - { name: about_ports, label: About — side ports, widget: image }
           - { name: about_firebox, label: About — firebox, widget: image }
           - { name: about_shed, label: About — night firing, widget: image }
+          - { name: course_1, label: Courses — picture 1, widget: image, required: false }
+          - { name: course_1_caption, label: Courses — caption 1, widget: string, required: false }
+          - { name: course_2, label: Courses — picture 2, widget: image, required: false }
+          - { name: course_2_caption, label: Courses — caption 2, widget: string, required: false }
+          - { name: course_3, label: Courses — picture 3, widget: image, required: false }
+          - { name: course_3_caption, label: Courses — caption 3, widget: string, required: false }
+          - { name: course_4, label: Courses — picture 4, widget: image, required: false }
+          - { name: course_4_caption, label: Courses — caption 4, widget: string, required: false }
 
   - name: pages
     label: Pages

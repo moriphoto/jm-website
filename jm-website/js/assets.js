@@ -1,8 +1,4 @@
 (function () {
-  function setSrc(el, url) {
-    if (!el || !url) return;
-    el.src = url;
-  }
   function apply(a) {
     if (!a) return;
     var video = document.querySelector("#splash video");
@@ -29,6 +25,23 @@
     if (a.collection && window.WORKS) {
       window.WORKS.forEach(function (w) {
         if (w.id === "00") w.src = a.collection.replace(/^\//, "");
+      });
+    }
+    var grid = document.getElementById("courses-grid");
+    if (grid) {
+      [1, 2, 3, 4].forEach(function (n) {
+        var fig = document.getElementById("course-fig-" + n);
+        var img = fig && fig.querySelector("img");
+        var cap = fig && fig.querySelector("figcaption");
+        var url = a["course_" + n];
+        if (!fig || !img) return;
+        if (url) {
+          img.src = url;
+          if (cap) cap.textContent = a["course_" + n + "_caption"] || "";
+          fig.hidden = false;
+        } else {
+          fig.hidden = true;
+        }
       });
     }
   }

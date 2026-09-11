@@ -5,5 +5,13 @@
   "about_john": "/images/about/john-stoking.jpg",
   "about_ports": "/images/about/anagama-ports.jpg",
   "about_firebox": "/images/about/firebox.jpg",
-  "about_shed": "/images/about/shed-firing.jpg"
+  "about_shed": "/images/about/shed-firing.jpg",
+  "course_1": "/images/about/john-stoking.jpg",
+  "course_1_caption": "At the firebox",
+  "course_2": "/images/about/anagama-ports.jpg",
+  "course_2_caption": "Side ports",
+  "course_3": "/images/about/firebox.jpg",
+  "course_3_caption": "The firebox",
+  "course_4": "/images/about/shed-firing.jpg",
+  "course_4_caption": "A night firing"
 }
