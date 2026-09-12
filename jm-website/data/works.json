@@ -126,7 +126,8 @@
       "src": "images/studio/17-three-mugs.jpg",
       "title": "Three mugs",
       "note": "Handled cups from one firing.",
-      "price": "On request"
+      "price": "On request",
+      "archived": true
     },
     {
       "id": "18",
