@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stills — John Mackenzie Ceramics</title>
+  <style>
+    body { margin:0; background:#0a0a0a; color:#f3f3f3; font-family:Helvetica,Arial,sans-serif; }
+    header { padding:24px; border-bottom:1px solid #222; }
+    h1 { font-size:22px; margin:8px 0 0; }
+    p { color:#8a8a8a; max-width:48ch; }
+    a { color:#c4a35a; }
+    .bar { padding:16px 24px; display:flex; gap:10px; flex-wrap:wrap; }
+    button, .btn {
+      font:700 11px/1 Helvetica,Arial,sans-serif; letter-spacing:.16em; text-transform:uppercase;
+      background:none; color:#fff; border:1px solid #fff; padding:10px 14px; cursor:pointer; text-decoration:none;
+    }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; padding:0 24px 40px; }
+    label { display:block; background:#111; border:1px solid #222; cursor:pointer; }
+    label img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
+    label span { display:block; padding:8px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <p style="letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:#8a4a22; margin:0">Admin</p>
+    <h1>Send pieces to Studio Stills</h1>
+    <p>Tick the catalogue JPEGs. Open stills. Process there. Download 1920 × 1080, then replace the image in Catalogue.</p>
+  </header>
+  <div class="bar">
+    <button type="button" id="all">Check all</button>
+    <button type="button" id="go">Open in Stills</button>
+    <a class="btn" href="/admin/">Back to editor</a>
+  </div>
+  <div class="grid" id="grid"></div>
+  <script>
+    const STILLS = "https://moriphoto.github.io/studio-stills/";
+    const grid = document.getElementById("grid");
+    fetch("../data/works.json").then(function (r) { return r.json(); }).then(function (data) {
+      const pieces = (data.pieces || []).filter(function (p) { return p.src; });
+      pieces.forEach(function (p) {
+        const src = p.src.charAt(0) === "/" ? p.src : "/" + p.src;
+        const abs = location.origin + src;
+        const el = document.createElement("label");
+        el.innerHTML = "<img src=\"" + src + "\" alt=\"\"><span><input type=\"checkbox\" checked data-url=\"" + abs + "\"> " + (p.title || p.id) + "</span>";
+        grid.appendChild(el);
+      });
+    }).catch(function () {
+      grid.textContent = "Could not read the catalogue.";
+    });
+    document.getElementById("all").onclick = function () {
+      const boxes = grid.querySelectorAll("input");
+      const on = !Array.from(boxes).every(function (b) { return b.checked; });
+      boxes.forEach(function (b) { b.checked = on; });
+    };
+    document.getElementById("go").onclick = function () {
+      const urls = Array.from(grid.querySelectorAll("input:checked")).map(function (b) { return b.getAttribute("data-url"); }).slice(0, 20);
+      if (!urls.length) return;
+      location.href = STILLS + "?images=" + encodeURIComponent(urls.join(","));
+    };
+  </script>
+</body>
+</html>
