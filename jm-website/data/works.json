@@ -2,18 +2,18 @@
   "collection_name": "Gweek 2026",
   "pieces": [
     {
-      "id": "00",
-      "src": "images/hold-collection.jpg",
-      "title": "Collection",
-      "note": "From the Gweek kiln. Use the arrows to see each piece.",
-      "price": ""
-    },
-    {
       "id": "01",
       "src": "images/studio/01-square-vessel.jpg",
       "title": "Square vessel test ",
       "note": "Celadon over a square well; ash at the foot.",
       "price": "On request"
+    },
+    {
+      "id": "00",
+      "src": "images/hold-collection.jpg",
+      "title": "Collection",
+      "note": "From the Gweek kiln. Use the arrows to see each piece.",
+      "price": ""
     },
     {
       "id": "02",
@@ -30,17 +30,17 @@
       "price": "On request"
     },
     {
+      "id": "05",
+      "src": "images/studio/05-sphere-flashing.jpg",
+      "title": "Sphere test",
+      "note": "Round jar, flashing and running ash.",
+      "price": "On request"
+    },
+    {
       "id": "04",
       "src": "images/studio/04-standing-form.jpg",
       "title": "Standing form",
       "note": "Twisted column, wood-ash and ember mark.",
-      "price": "On request"
-    },
-    {
-      "id": "05",
-      "src": "images/studio/05-sphere-flashing.jpg",
-      "title": "Sphere",
-      "note": "Round jar, flashing and running ash.",
       "price": "On request"
     },
     {
