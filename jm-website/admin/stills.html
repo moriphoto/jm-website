@@ -4,105 +4,151 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Media — Studio stills</title>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
     :root { --gold:#c4a35a; --rust:#8a4a22; --mute:#8a8a8a; }
     * { box-sizing:border-box; }
     body { margin:0; background:#0a0a0a; color:#f3f3f3; font-family:Helvetica,Arial,sans-serif; }
-    header { padding:20px 20px 12px; border-bottom:1px solid #222; }
+    header { padding:20px; border-bottom:1px solid #222; }
     header p.k { letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--rust); margin:0; }
     h1 { font-size:22px; margin:8px 0 0; }
-    .lead { color:var(--mute); max-width:52ch; font-size:14px; line-height:1.45; }
+    .lead { color:var(--mute); font-size:14px; max-width:46ch; line-height:1.45; }
     a { color:var(--gold); }
-    .bar { padding:12px 20px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; border-bottom:1px solid #222; }
-    button, .btn {
+    .bar { padding:16px 20px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    button, .btn, label.btn {
       font:700 11px/1 Helvetica,Arial,sans-serif; letter-spacing:.16em; text-transform:uppercase;
-      background:none; color:#fff; border:1px solid #fff; padding:10px 14px; cursor:pointer; text-decoration:none;
+      background:none; color:#fff; border:1px solid #fff; padding:12px 16px; cursor:pointer; text-decoration:none;
     }
-    .tabs { display:flex; gap:8px; padding:12px 20px 0; }
-    .tabs button.on { color:var(--gold); border-color:var(--gold); }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px; padding:16px 20px 48px; }
-    label.card { display:block; background:#111; border:1px solid #222; cursor:pointer; }
-    label.card img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
-    label.card span { display:flex; gap:6px; align-items:flex-start; padding:8px; font-size:11px; color:#ccc; }
+    label.btn { background:#fff; color:#000; }
+    #files { position:absolute; width:0; height:0; opacity:0; }
     #status { color:var(--gold); font-size:13px; }
+    ul { list-style:none; margin:0; padding:0 20px 40px; }
+    li { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #222; font-size:13px; }
+    li span { flex:1; word-break:break-all; color:#ccc; }
+    li button { padding:8px 10px; color:#ff5a5a; border-color:#ff5a5a; }
   </style>
 </head>
 <body>
   <header>
     <p class="k">John Mackenzie Ceramics — media</p>
-    <h1>Studio stills</h1>
-    <p class="lead">Every picture already on the site. Tick, send to Stills, process, download 1920 × 1080, replace in Catalogue.</p>
+    <h1>Inbox</h1>
+    <p class="lead">Upload from the phone. Files land in media/inbox. Delete anything you are not using. Process the still in the Stills app.</p>
   </header>
   <div class="bar">
-    <button type="button" id="all">Check all</button>
-    <button type="button" id="go">Open in Stills</button>
+    <label class="btn" for="files">Upload</label>
+    <input id="files" type="file" accept="image/*" multiple>
+    <a class="btn" href="https://moriphoto.github.io/studio-stills/">Open Stills</a>
     <a class="btn" href="/admin/">Editor</a>
     <span id="status"></span>
   </div>
-  <div class="tabs">
-    <button type="button" class="on" data-tab="all">All media</button>
-    <button type="button" data-tab="catalogue">Catalogue</button>
-    <button type="button" data-tab="site">Site pictures</button>
-  </div>
-  <div class="grid" id="grid"></div>
+  <ul id="list"></ul>
   <script>
-    const STILLS = "https://moriphoto.github.io/studio-stills/";
-    const grid = document.getElementById("grid");
+    const API = "/.netlify/git/github";
+    const FOLDER = "jm-website/images/inbox";
     const status = document.getElementById("status");
-    let items = [];
-    let tab = "all";
+    const listEl = document.getElementById("list");
 
-    function abs(src) {
-      if (!src || /\.mp4$/i.test(src)) return null;
-      const path = src.charAt(0) === "/" ? src : "/" + src;
-      return { path: path, url: location.origin + path, name: decodeURIComponent(path.split("/").pop()) };
+    function say(t) { status.textContent = t || ""; }
+
+    async function token() {
+      const u = netlifyIdentity.currentUser();
+      if (!u) {
+        netlifyIdentity.open();
+        throw new Error("Sign in first");
+      }
+      if (u.jwt) await u.jwt();
+      return u.token.access_token;
     }
-    function add(list, src, label, group) {
-      const a = abs(src);
-      if (!a) return;
-      if (list.some(function (x) { return x.url === a.url; })) return;
-      list.push({ url: a.url, path: a.path, name: label || a.name, group: group });
-    }
-    function draw() {
-      grid.innerHTML = "";
-      const show = items.filter(function (it) { return tab === "all" || it.group === tab; });
-      show.forEach(function (it) {
-        const el = document.createElement("label");
-        el.className = "card";
-        el.innerHTML = "<img src=\"" + it.path + "\" alt=\"\"><span><input type=\"checkbox\" checked data-url=\"" + it.url + "\"> " + it.name + "</span>";
-        grid.appendChild(el);
+
+    function toB64(file) {
+      return new Promise(function (res, rej) {
+        const r = new FileReader();
+        r.onload = function () {
+          const s = String(r.result || "");
+          res(s.replace(/^data:[^;]+;base64,/, ""));
+        };
+        r.onerror = rej;
+        r.readAsDataURL(file);
       });
-      status.textContent = show.length + " stills";
     }
-    Promise.all([
-      fetch("../data/works.json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }),
-      fetch("../data/assets.json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
-    ]).then(function (pair) {
-      const works = pair[0] || {};
-      const assets = pair[1] || {};
-      (works.pieces || []).forEach(function (p) { add(items, p.src, p.title || p.id, "catalogue"); });
-      Object.keys(assets).forEach(function (k) {
-        if (typeof assets[k] === "string") add(items, assets[k], k.replace(/_/g, " "), "site");
+
+    function safeName(name) {
+      return String(name || "still.jpg").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+/, "") || "still.jpg";
+    }
+
+    async function listInbox() {
+      say("Loading media…");
+      const t = await token();
+      const r = await fetch(API + "/contents/" + FOLDER + "?ref=main", {
+        headers: { Authorization: "Bearer " + t }
       });
-      draw();
-    });
-    document.querySelectorAll(".tabs button").forEach(function (b) {
-      b.onclick = function () {
-        tab = b.getAttribute("data-tab");
-        document.querySelectorAll(".tabs button").forEach(function (x) { x.classList.toggle("on", x === b); });
-        draw();
-      };
-    });
-    document.getElementById("all").onclick = function () {
-      const boxes = grid.querySelectorAll("input");
-      const on = !Array.from(boxes).every(function (b) { return b.checked; });
-      boxes.forEach(function (b) { b.checked = on; });
+      if (r.status === 404) { listEl.innerHTML = "<li><span>Inbox empty.</span></li>"; say(""); return; }
+      if (!r.ok) { say("Could not read media. Sign in."); return; }
+      const rows = await r.json();
+      const files = (Array.isArray(rows) ? rows : []).filter(function (f) {
+        return f.type === "file" && /\.(jpe?g|png|webp)$/i.test(f.name);
+      });
+      listEl.innerHTML = "";
+      if (!files.length) listEl.innerHTML = "<li><span>Inbox empty.</span></li>";
+      files.forEach(function (f) {
+        const li = document.createElement("li");
+        li.innerHTML = "<span>" + f.name + "</span>";
+        const del = document.createElement("button");
+        del.type = "button";
+        del.textContent = "Delete";
+        del.onclick = function () { removeFile(f); };
+        li.appendChild(del);
+        listEl.appendChild(li);
+      });
+      say(files.length ? files.length + " in inbox" : "");
+    }
+
+    async function uploadFiles(fileList) {
+      const files = Array.from(fileList || []).filter(function (f) { return /^image\//.test(f.type) || /\.(jpe?g|png|webp)$/i.test(f.name); });
+      if (!files.length) { say("Pick JPEGs."); return; }
+      const t = await token();
+      for (let i = 0; i < files.length; i++) {
+        const name = safeName(files[i].name);
+        say("Saving " + name + "…");
+        const content = await toB64(files[i]);
+        const put = await fetch(API + "/contents/" + FOLDER + "/" + name, {
+          method: "PUT",
+          headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "inbox " + name, content: content, branch: "main" })
+        });
+        if (!put.ok) {
+          const err = await put.text();
+          say("Upload failed: " + (err.slice(0, 80) || put.status));
+          return;
+        }
+      }
+      say("Saved to media. Netlify will publish in a minute.");
+      listInbox();
+    }
+
+    async function removeFile(f) {
+      if (!confirm("Delete " + f.name + " from media?")) return;
+      const t = await token();
+      const del = await fetch(API + "/contents/" + FOLDER + "/" + f.name, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "remove inbox " + f.name, sha: f.sha, branch: "main" })
+      });
+      if (!del.ok) { say("Delete failed."); return; }
+      say("Deleted " + f.name);
+      listInbox();
+    }
+
+    document.getElementById("files").onchange = function (e) {
+      uploadFiles(e.target.files);
+      e.target.value = "";
     };
-    document.getElementById("go").onclick = function () {
-      const urls = Array.from(grid.querySelectorAll("input:checked")).map(function (b) { return b.getAttribute("data-url"); }).slice(0, 20);
-      if (!urls.length) { status.textContent = "Tick at least one."; return; }
-      location.href = STILLS + "?images=" + encodeURIComponent(urls.join(","));
-    };
+    netlifyIdentity.on("init", function (user) {
+      if (user) listInbox();
+      else say("Sign in to upload.");
+    });
+    netlifyIdentity.on("login", function () { listInbox(); });
+    netlifyIdentity.init();
   </script>
 </body>
 </html>
