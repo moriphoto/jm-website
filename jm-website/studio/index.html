@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <title>JM Studio — ceramic stills</title>
+  <style>
+    :root { --ink:#0a0a0a; --gold:#c4a35a; --rust:#8a4a22; --mute:#8a8a8a; --live:#39ff14; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--ink); color:#f3f3f3; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; }
+    header { padding:24px 24px 16px; border-bottom:1px solid rgba(255,255,255,.1); }
+    header p.k { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--rust); }
+    h1 { font-size:26px; margin-top:8px; }
+    .lead { color:var(--mute); font-size:13px; max-width:58ch; margin-top:8px; line-height:1.5; }
+    .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:12px 24px; border-bottom:1px solid rgba(255,255,255,.1); }
+    button { font:inherit; cursor:pointer; }
+    .btn { background:#fff; color:#000; border:0; padding:10px 14px; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+    .ghost { background:none; color:#fff; border:1px solid #fff; padding:10px 14px; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+    .gold { background:none; color:var(--gold); border:1px solid var(--gold); padding:10px 14px; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+    button.on, .gold.on, .ghost.on {
+      color: var(--live);
+      border-color: var(--live);
+      box-shadow: 0 0 14px rgba(57,255,20,.55);
+    }
+    .icon { width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; }
+    .icon svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; }
+    a.icon { text-decoration:none; color:#fff; }
+    #rmBrush.on { color:#ff3b3b; border-color:#ff3b3b; box-shadow:0 0 12px rgba(255,59,59,.4); }
+    #files { position:absolute; width:0; height:0; opacity:0; pointer-events:none; }
+    #calTop { width:28px; height:28px; padding:0; border:1px solid #fff; background:none; cursor:pointer; }
+    .cal-opt { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:12px 0; }
+    .drop { margin:16px 24px; border:1px dashed rgba(255,255,255,.2); min-height:64px; display:flex; align-items:center; justify-content:center; color:var(--mute); cursor:pointer; }
+
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; padding:0 24px 40px; }
+    article { background:#111; border:1px solid rgba(255,255,255,.1); }
+    article img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
+    article .m { padding:8px; font-size:11px; display:flex; align-items:center; gap:8px; }
+    article .pick { flex:1; display:flex; align-items:center; gap:6px; color:#ccc; min-width:0; overflow:hidden; }
+    article .kill { margin-left:auto; background:none; border:0; color:#8a8a8a; font-size:16px; line-height:1; padding:0 4px; cursor:pointer; }
+    article .kill:hover { color:#ff5a5a; }
+    #status { color:var(--gold); font-size:13px; }
+    label.t { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; gap:8px; align-items:center; }
+    #cal { padding:12px 24px 24px; border-bottom:1px solid rgba(255,255,255,.1); }
+    #calSrc, #calPrev { width:100%; max-height:280px; object-fit:contain; background:#000; cursor:crosshair; display:block; border:1px solid rgba(255,255,255,.12); }
+    #cal .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+    #heroWrap { padding:12px 24px 8px; display:flex; gap:12px; align-items:flex-start; }
+    #heroSide { display:flex; flex-direction:column; gap:8px; }
+    #hero {
+      width:100%; max-width:880px; max-height:400px; height:auto;
+      object-fit:contain; display:block; background:#000;
+      border:1px solid rgba(255,255,255,.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="k">John Mackenzie Ceramics</p>
+    <h1>Studio stills</h1>
+    <p class="lead">Process the stills. Tick the thumbs you want. Calibrate if you need a new cove. SET bakes a cleanup.</p>
+  </header>
+  <div class="bar">
+    <a class="ghost icon" id="home" href="../admin/" title="Admin" aria-label="Admin">
+      <svg viewBox="0 0 24 24"><path d="M4 11 L12 4 L20 11"/><path d="M7 10 V20 H17 V10"/></svg>
+    </a>
+    <label class="btn" for="files">Add JPEGs</label>
+    <input id="files" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png,.webp" multiple>
+    <button class="gold" id="calibrate">Calibrate</button>
+    <label class="t"><input type="radio" name="res" id="resWeb" checked> Web 1920</label>
+    <label class="t"><input type="radio" name="res" id="resHigh"> High (upload)</label>
+    <label class="t">Enhance <input id="enhance" type="range" min="100" max="130" value="108"> <span id="enhancev">1.08</span></label>
+    <label class="t">Blend edge <input id="edge" type="range" min="0" max="20" value="10"> <span id="edgev">10</span></label>
+    <button class="ghost" id="selAll">Check all</button>
+    <button class="ghost" id="run">Process all</button>
+    <button class="ghost" id="reset">Reset</button>
+    <button class="ghost" id="dl">Download singles</button>
+    <button class="ghost" id="dlFolder">Download folder</button>
+    <button class="gold" id="dlCeramics">To ceramics media</button>
+    <span id="status"></span>
+  </div>
+  <div class="drop" id="drop">Drop original JPEGs. Tick thumbs. Calibrate. Process.</div>
+  <section id="cal" hidden>
+    <p class="k">Calibrate</p>
+    <p class="lead">Use this plate as it is. Turn Top colour on only if you want to tint the cove. Then click the floor.</p>
+    <div class="cal-opt">
+      <button type="button" class="ghost" id="calColorOn">Top colour</button>
+      <label class="t" id="calTopWrap" hidden>Colour <input id="calTop" type="color" value="#1a1a1a" title="Top of the cove"></label>
+    </div>
+    <p class="k">Click the floor in this still</p>
+    <div class="row">
+      <div><img id="calSrc" alt="Pick floor"></div>
+      <div id="calPrevWrap" hidden>
+        <img id="calPrev" alt="Plate">
+        <button class="gold" id="calUse" style="margin-top:12px">Use this plate</button>
+        <button class="ghost" id="calClose" style="margin-top:12px">Close</button>
+      </div>
+    </div>
+  </section>
+  <section id="heroWrap" hidden>
+    <img id="hero" alt="still">
+    <div id="heroSide">
+      <button class="ghost icon" id="rmBrush" title="Remove" aria-label="Remove">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M8 8 l8 8 M16 8 l-8 8"/></svg>
+      </button>
+      <button class="gold" id="applyEdit">Set</button>
+    </div>
+  </section>
+  <div class="grid" id="grid"></div>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="studio-1.js"></script>
+  <script src="studio-cut.js"></script>
+  <script src="studio-2.js"></script>
+  <script src="studio-dir.js"></script>
+  <script src="studio-seed.js"></script>
+  <script src="studio-soft.js"></script>
+  <script src="studio-3.js"></script>
+  <script src="studio-layers.js"></script>
+  <script src="studio-ui.js"></script>
+  <script src="studio-cal.js"></script>
+  <script src="admin-bridge.js"></script>
+  <script src="media-push.js"></script>
+  <script type="module" src="ai-cut.js"></script>
+</body>
+</html>
