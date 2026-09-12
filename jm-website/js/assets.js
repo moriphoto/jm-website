@@ -1,12 +1,15 @@
 (function () {
+  function rel(u) {
+    return String(u || "").replace(/^\//, "");
+  }
   function apply(a) {
     if (!a) return;
     var video = document.querySelector("#splash video");
     if (video) {
-      if (a.splash_poster) video.setAttribute("poster", a.splash_poster);
+      if (a.splash_poster) video.setAttribute("poster", rel(a.splash_poster));
       var source = video.querySelector("source");
       if (a.splash_video && source) {
-        source.src = a.splash_video;
+        source.src = rel(a.splash_video);
         video.load();
       }
     }
@@ -19,12 +22,12 @@
     document.querySelectorAll("#about img").forEach(function (img) {
       var src = img.getAttribute("src") || "";
       Object.keys(aboutMap).forEach(function (key) {
-        if (src.indexOf(aboutMap[key]) !== -1 && a[key]) img.src = a[key];
+        if (src.indexOf(aboutMap[key]) !== -1 && a[key]) img.src = rel(a[key]);
       });
     });
     if (a.collection && window.WORKS) {
       window.WORKS.forEach(function (w) {
-        if (w.id === "00") w.src = a.collection.replace(/^\//, "");
+        if (w.id === "00") w.src = rel(a.collection);
       });
     }
     var grid = document.getElementById("courses-grid");
@@ -36,7 +39,7 @@
         var url = a["course_" + n];
         if (!fig || !img) return;
         if (url) {
-          img.src = url;
+          img.src = rel(url);
           if (cap) cap.textContent = a["course_" + n + "_caption"] || "";
           fig.hidden = false;
         } else {

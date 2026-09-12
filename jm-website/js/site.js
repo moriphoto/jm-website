@@ -1,5 +1,6 @@
 (function () {
   let allPieces = window.WORKS || [];
+  function rel(u) { return String(u || "").replace(/^\//, ""); }
   let works = allPieces.filter(function (w) { return !w.archived; });
   let archiveMode = false;
   let index = 0;
@@ -83,7 +84,7 @@
     if (!works.length) return;
     index = (i + works.length) % works.length;
     const w = works[index];
-    hero.src = w.src;
+    hero.src = rel(w.src);
     hero.alt = w.title;
     title.textContent = w.title;
     note.textContent = w.note;
@@ -113,7 +114,7 @@
       const tr = document.createElement("tr");
       if (qty) tr.className = "picked";
       tr.innerHTML =
-        "<td><img class=\"thumb\" src=\"" + w.src + "\" alt=\"\"></td>" +
+        "<td><img class=\"thumb\" src=\"" + rel(w.src) + "\" alt=\"\"></td>" +
         "<td>" + w.title + "</td>" +
         "<td class=\"tag\">" + (w.price || "On request") + "</td>" +
         "<td><input type=\"number\" min=\"0\" step=\"1\" value=\"" + qty + "\" data-id=\"" + w.id + "\"></td>";
@@ -138,7 +139,7 @@
       const b = document.createElement("button");
       b.className = "tile";
       b.type = "button";
-      b.innerHTML = "<img src=\"" + w.src + "\" alt=\"" + w.title + "\"><span>" + w.title + "</span>";
+      b.innerHTML = "<img src=\"" + rel(w.src) + "\" alt=\"" + w.title + "\"><span>" + w.title + "</span>";
       b.addEventListener("click", function () { render(i); showViewer(); });
       tiles.appendChild(b);
     });
@@ -251,7 +252,10 @@
   fetch("data/works.json")
     .then(function (r) { return r.json(); })
     .then(function (data) {
-      allPieces = (data && data.pieces) ? data.pieces : allPieces;
+      allPieces = ((data && data.pieces) ? data.pieces : allPieces).map(function (w) {
+        w.src = rel(w.src);
+        return w;
+      });
       window.WORKS = allPieces;
       works = allPieces.filter(function (w) { return !w.archived; });
       start();
