@@ -4,6 +4,12 @@
 
 Open https://jmceramics.netlify.app/admin/ and sign in.
 
+## Media / Studio stills
+
+https://jmceramics.netlify.app/admin/stills.html
+
+That panel lists every JPEG already on the site. Tick. Open in Stills. Process. Download 1920 × 1080. Replace the image on the piece in Catalogue. Publish.
+
 ## Catalogue
 
 - 00 is the opening group photograph. Do not delete it.
