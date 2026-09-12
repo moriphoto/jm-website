@@ -17,6 +17,12 @@
       color:#fff; border:1px solid #fff; padding:10px 14px; font-size:11px; font-weight:700;
       letter-spacing:.16em; text-transform:uppercase; text-decoration:none; background:none; cursor:pointer;
     }
+    .studio-ico {
+      width:36px; height:36px; margin-left:auto;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid #c4a35a; color:#c4a35a; text-decoration:none; padding:0;
+    }
+    .studio-ico svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; }
     .folder { border-top:1px solid rgba(255,255,255,.1); padding:18px 0; }
     .folder h2 { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:600; }
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
@@ -36,6 +42,9 @@
     <label class="t"><input type="radio" name="sort" value="oldest"> Oldest</label>
     <label class="t"><input type="radio" name="sort" value="name"> Name</label>
     <span id="status"></span>
+    <a class="studio-ico" href="https://moriphoto.github.io/studio-stills/?return=https://jmceramics.netlify.app/admin/" title="Studio stills" aria-label="Studio stills">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </a>
   </div>
   <div id="list"></div>
   <script>

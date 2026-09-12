@@ -7,16 +7,37 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
     body { margin:0; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; background:#0a0a0a; }
-    .admin-bar { padding:10px 16px; border-bottom:1px solid rgba(255,255,255,.12); display:flex; gap:16px; align-items:center; }
+    .admin-bar {
+      padding:10px 16px; border-bottom:1px solid rgba(255,255,255,.12);
+      display:flex; gap:16px; align-items:center;
+    }
     .admin-bar a { color:#c4a35a; text-decoration:none; font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; }
+    .admin-bar .grow { flex:1; }
+    .studio-ico {
+      width:36px; height:36px; margin-left:auto;
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid #c4a35a; color:#c4a35a;
+    }
+    .studio-ico svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; }
+    .studio-ico:hover { color:#fff; border-color:#fff; }
   </style>
 </head>
 <body>
   <div class="admin-bar">
     <a href="media.html">Media folders</a>
-    <a href="https://moriphoto.github.io/studio-stills/" target="_blank" rel="noopener">Studio stills</a>
     <a href="https://moriphoto.github.io/jm-website/" target="_blank" rel="noopener">Public look</a>
+    <span class="grow"></span>
+    <a class="studio-ico" id="toStudio" href="https://moriphoto.github.io/studio-stills/?return=https://jmceramics.netlify.app/admin/" title="Studio stills" aria-label="Studio stills">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </a>
   </div>
+  <script>
+    (function () {
+      var a = document.getElementById("toStudio");
+      if (!a) return;
+      a.href = "https://moriphoto.github.io/studio-stills/?return=" + encodeURIComponent(location.origin + location.pathname.replace(/index\.html$/, ""));
+    })();
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 </body>
 </html>
