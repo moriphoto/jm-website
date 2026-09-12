@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Media — John Mackenzie Ceramics</title>
+  <style>
+    :root { --ink:#0a0a0a; --gold:#c4a35a; --rust:#8a4a22; --mute:#8a8a8a; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--ink); color:#f3f3f3; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; padding:28px 24px 80px; }
+    p.k { font-size:10px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--rust); }
+    h1 { font-size:26px; margin:8px 0 12px; font-weight:600; }
+    .lead { color:var(--mute); font-size:13px; max-width:58ch; line-height:1.5; margin-bottom:20px; }
+    .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:24px; }
+    label.t { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); display:flex; gap:8px; align-items:center; }
+    a.ghost, button.ghost {
+      color:#fff; border:1px solid #fff; padding:10px 14px; font-size:11px; font-weight:700;
+      letter-spacing:.16em; text-transform:uppercase; text-decoration:none; background:none; cursor:pointer;
+    }
+    .folder { border-top:1px solid rgba(255,255,255,.1); padding:18px 0; }
+    .folder h2 { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-weight:600; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+    figure { margin:0; background:#111; border:1px solid rgba(255,255,255,.1); }
+    figure img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
+    figcaption { padding:8px; font-size:11px; color:#ccc; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #status { color:var(--gold); font-size:13px; margin-left:8px; }
+  </style>
+</head>
+<body>
+  <p class="k">John Mackenzie Ceramics</p>
+  <h1>Media</h1>
+  <p class="lead">Newest pack sits at the top. Inbox packs come from Studio Stills. Studio is the live catalogue stills.</p>
+  <div class="bar">
+    <a class="ghost" href="./">Editor</a>
+    <label class="t"><input type="radio" name="sort" value="newest" checked> Newest</label>
+    <label class="t"><input type="radio" name="sort" value="oldest"> Oldest</label>
+    <label class="t"><input type="radio" name="sort" value="name"> Name</label>
+    <span id="status"></span>
+  </div>
+  <div id="list"></div>
+  <script>
+    var API = "https://api.github.com/repos/moriphoto/jm-website/contents/jm-website/images?ref=main";
+    var RAW = "https://raw.githubusercontent.com/moriphoto/jm-website/main/jm-website/images/";
+    var folders = [];
+    function status(t) { document.getElementById("status").textContent = t || ""; }
+    function isImage(name) { return /\.(jpe?g|png|webp|gif|mp4)$/i.test(name); }
+    async function listDir(path) {
+      var url = API.replace("/images?", "/images/" + path + "?");
+      if (!path) url = API;
+      var res = await fetch(url);
+      if (!res.ok) throw new Error("Could not read media");
+      return res.json();
+    }
+    async function load() {
+      status("Reading folders…");
+      var root = await listDir("");
+      folders = [];
+      for (var i = 0; i < root.length; i++) {
+        var item = root[i];
+        if (item.type === "dir") {
+          var kids = await listDir(item.name);
+          var files = kids.filter(function (k) { return k.type === "file" && isImage(k.name); });
+          var subdirs = kids.filter(function (k) { return k.type === "dir"; });
+          if (files.length) {
+            folders.push({ name: item.name, files: files, stamp: item.name });
+          }
+          for (var s = 0; s < subdirs.length; s++) {
+            var sub = subdirs[s];
+            var nested = item.name + "/" + sub.name;
+            var grand = await listDir(nested);
+            var gfiles = grand.filter(function (k) { return k.type === "file" && isImage(k.name); });
+            if (gfiles.length) {
+              folders.push({ name: nested, files: gfiles, stamp: sub.name });
+            }
+          }
+        } else if (item.type === "file" && isImage(item.name)) {
+          folders.push({
+            name: "root",
+            path: "images",
+            files: [item],
+            stamp: "0"
+          });
+        }
+      }
+      draw();
+      status(folders.length ? "" : "No media folders yet.");
+    }
+    function sortFolders(mode) {
+      var copy = folders.slice();
+      copy.sort(function (a, b) {
+        if (mode === "name") return a.name.localeCompare(b.name);
+        var da = /^\d{4}-\d{2}-\d{2}$/.test(a.stamp);
+        var db = /^\d{4}-\d{2}-\d{2}$/.test(b.stamp);
+        if (da && !db) return -1;
+        if (!da && db) return 1;
+        var cmp = String(a.stamp).localeCompare(String(b.stamp));
+        if (da && db) return mode === "oldest" ? cmp : -cmp;
+        return mode === "oldest" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      });
+      return copy;
+    }
+    function draw() {
+      var mode = (document.querySelector("input[name=sort]:checked") || {}).value || "newest";
+      var list = document.getElementById("list");
+      list.innerHTML = "";
+      sortFolders(mode).forEach(function (folder) {
+        var sec = document.createElement("section");
+        sec.className = "folder";
+        var n = folder.files.length;
+        sec.innerHTML = "<h2>" + folder.name + " · " + n + "</h2><div class=\"grid\"></div>";
+        var grid = sec.querySelector(".grid");
+        folder.files.slice().sort(function (a, b) {
+          if (mode === "name") return a.name.localeCompare(b.name);
+          return mode === "oldest" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+        }).forEach(function (file) {
+          var src = RAW + (folder.name === "root" ? file.name : folder.name + "/" + file.name);
+          var fig = document.createElement("figure");
+          if (/\.mp4$/i.test(file.name)) {
+            fig.innerHTML = "<video src=\"" + src + "\" muted></video><figcaption>" + file.name + "</figcaption>";
+          } else {
+            fig.innerHTML = "<img src=\"" + src + "\" alt=\"\"><figcaption>" + file.name + "</figcaption>";
+          }
+          grid.appendChild(fig);
+        });
+        list.appendChild(sec);
+      });
+    }
+    document.querySelectorAll("input[name=sort]").forEach(function (el) {
+      el.onchange = draw;
+    });
+    load().catch(function (err) { status(err.message || "Media failed"); });
+  </script>
+</body>
+</html>
