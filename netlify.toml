@@ -9,6 +9,12 @@
   ignore = "exit 0"
 
 [[redirects]]
+  from = "/images/mark-jm.png"
+  to = "/jm-website/images/signature.png"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/jm-website/:splat"
   status = 200
