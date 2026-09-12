@@ -3,50 +3,95 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stills — John Mackenzie Ceramics</title>
+  <title>Media — Studio stills</title>
   <style>
+    :root { --gold:#c4a35a; --rust:#8a4a22; --mute:#8a8a8a; }
+    * { box-sizing:border-box; }
     body { margin:0; background:#0a0a0a; color:#f3f3f3; font-family:Helvetica,Arial,sans-serif; }
-    header { padding:24px; border-bottom:1px solid #222; }
+    header { padding:20px 20px 12px; border-bottom:1px solid #222; }
+    header p.k { letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:var(--rust); margin:0; }
     h1 { font-size:22px; margin:8px 0 0; }
-    p { color:#8a8a8a; max-width:48ch; }
-    a { color:#c4a35a; }
-    .bar { padding:16px 24px; display:flex; gap:10px; flex-wrap:wrap; }
+    .lead { color:var(--mute); max-width:52ch; font-size:14px; line-height:1.45; }
+    a { color:var(--gold); }
+    .bar { padding:12px 20px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; border-bottom:1px solid #222; }
     button, .btn {
       font:700 11px/1 Helvetica,Arial,sans-serif; letter-spacing:.16em; text-transform:uppercase;
       background:none; color:#fff; border:1px solid #fff; padding:10px 14px; cursor:pointer; text-decoration:none;
     }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; padding:0 24px 40px; }
-    label { display:block; background:#111; border:1px solid #222; cursor:pointer; }
-    label img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
-    label span { display:block; padding:8px; font-size:12px; }
+    .tabs { display:flex; gap:8px; padding:12px 20px 0; }
+    .tabs button.on { color:var(--gold); border-color:var(--gold); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px; padding:16px 20px 48px; }
+    label.card { display:block; background:#111; border:1px solid #222; cursor:pointer; }
+    label.card img { width:100%; aspect-ratio:16/9; object-fit:contain; background:#000; display:block; }
+    label.card span { display:flex; gap:6px; align-items:flex-start; padding:8px; font-size:11px; color:#ccc; }
+    #status { color:var(--gold); font-size:13px; }
   </style>
 </head>
 <body>
   <header>
-    <p style="letter-spacing:.2em; text-transform:uppercase; font-size:10px; color:#8a4a22; margin:0">Admin</p>
-    <h1>Send pieces to Studio Stills</h1>
-    <p>Tick the catalogue JPEGs. Open stills. Process there. Download 1920 × 1080, then replace the image in Catalogue.</p>
+    <p class="k">John Mackenzie Ceramics — media</p>
+    <h1>Studio stills</h1>
+    <p class="lead">Every picture already on the site. Tick, send to Stills, process, download 1920 × 1080, replace in Catalogue.</p>
   </header>
   <div class="bar">
     <button type="button" id="all">Check all</button>
     <button type="button" id="go">Open in Stills</button>
-    <a class="btn" href="/admin/">Back to editor</a>
+    <a class="btn" href="/admin/">Editor</a>
+    <span id="status"></span>
+  </div>
+  <div class="tabs">
+    <button type="button" class="on" data-tab="all">All media</button>
+    <button type="button" data-tab="catalogue">Catalogue</button>
+    <button type="button" data-tab="site">Site pictures</button>
   </div>
   <div class="grid" id="grid"></div>
   <script>
     const STILLS = "https://moriphoto.github.io/studio-stills/";
     const grid = document.getElementById("grid");
-    fetch("../data/works.json").then(function (r) { return r.json(); }).then(function (data) {
-      const pieces = (data.pieces || []).filter(function (p) { return p.src; });
-      pieces.forEach(function (p) {
-        const src = p.src.charAt(0) === "/" ? p.src : "/" + p.src;
-        const abs = location.origin + src;
+    const status = document.getElementById("status");
+    let items = [];
+    let tab = "all";
+
+    function abs(src) {
+      if (!src || /\.mp4$/i.test(src)) return null;
+      const path = src.charAt(0) === "/" ? src : "/" + src;
+      return { path: path, url: location.origin + path, name: decodeURIComponent(path.split("/").pop()) };
+    }
+    function add(list, src, label, group) {
+      const a = abs(src);
+      if (!a) return;
+      if (list.some(function (x) { return x.url === a.url; })) return;
+      list.push({ url: a.url, path: a.path, name: label || a.name, group: group });
+    }
+    function draw() {
+      grid.innerHTML = "";
+      const show = items.filter(function (it) { return tab === "all" || it.group === tab; });
+      show.forEach(function (it) {
         const el = document.createElement("label");
-        el.innerHTML = "<img src=\"" + src + "\" alt=\"\"><span><input type=\"checkbox\" checked data-url=\"" + abs + "\"> " + (p.title || p.id) + "</span>";
+        el.className = "card";
+        el.innerHTML = "<img src=\"" + it.path + "\" alt=\"\"><span><input type=\"checkbox\" checked data-url=\"" + it.url + "\"> " + it.name + "</span>";
         grid.appendChild(el);
       });
-    }).catch(function () {
-      grid.textContent = "Could not read the catalogue.";
+      status.textContent = show.length + " stills";
+    }
+    Promise.all([
+      fetch("../data/works.json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }),
+      fetch("../data/assets.json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
+    ]).then(function (pair) {
+      const works = pair[0] || {};
+      const assets = pair[1] || {};
+      (works.pieces || []).forEach(function (p) { add(items, p.src, p.title || p.id, "catalogue"); });
+      Object.keys(assets).forEach(function (k) {
+        if (typeof assets[k] === "string") add(items, assets[k], k.replace(/_/g, " "), "site");
+      });
+      draw();
+    });
+    document.querySelectorAll(".tabs button").forEach(function (b) {
+      b.onclick = function () {
+        tab = b.getAttribute("data-tab");
+        document.querySelectorAll(".tabs button").forEach(function (x) { x.classList.toggle("on", x === b); });
+        draw();
+      };
     });
     document.getElementById("all").onclick = function () {
       const boxes = grid.querySelectorAll("input");
@@ -55,7 +100,7 @@
     };
     document.getElementById("go").onclick = function () {
       const urls = Array.from(grid.querySelectorAll("input:checked")).map(function (b) { return b.getAttribute("data-url"); }).slice(0, 20);
-      if (!urls.length) return;
+      if (!urls.length) { status.textContent = "Tick at least one."; return; }
       location.href = STILLS + "?images=" + encodeURIComponent(urls.join(","));
     };
   </script>
