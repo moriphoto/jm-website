@@ -17,8 +17,8 @@
     },
     {
       "id": "02",
-      "src": "/images/D2E3EA33-D7AA-49DB-8A6D-92905B94B5E8_1_.JPG",
-      "title": "god knows not much ",
+      "src": "images/studio/02-fluted-vessel.jpg",
+      "title": "Fluted vessel",
       "note": "Ash and iron on a vertically carved wall.",
       "price": "On request"
     },
@@ -75,8 +75,8 @@
     {
       "id": "10",
       "src": "images/studio/10-faceted-cone.jpg",
-      "title": "hello test",
-      "note": "ash-black edges ",
+      "title": "Faceted cone",
+      "note": "Planes cut from a cone; ash-black edges.",
       "price": "On request"
     },
     {
@@ -155,14 +155,6 @@
       "title": "Two plates",
       "note": "Hakeme and iron on a pale ground.",
       "price": "On request"
-    },
-    {
-      "price": "On request",
-      "archived": false,
-      "src": "/images/studio/07-three-cups.jpg",
-      "title": "3 cups",
-      "note": "3x glazed plates",
-      "id": "23"
     }
   ]
 }
