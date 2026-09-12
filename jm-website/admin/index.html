@@ -4,12 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit — John Mackenzie Ceramics</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <script>
-    if (window.netlifyIdentity) {
-      netlifyIdentity.init({ APIUrl: "https://jmceramics.netlify.app/.netlify/identity" });
-    }
-  </script>
   <style>
     #cms-app-btn {
       position: fixed;
@@ -31,6 +25,23 @@
 </head>
 <body>
   <a id="cms-app-btn" href="../studio/">App</a>
+  <script>
+    localStorage.setItem("netlifySiteURL", "https://jmceramics.netlify.app");
+  </script>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" data-netlify-identity="https://jmceramics.netlify.app/.netlify/identity"></script>
+  <script>
+    (function () {
+      var API = "https://jmceramics.netlify.app/.netlify/identity";
+      if (!window.netlifyIdentity) return;
+      var raw = netlifyIdentity.init.bind(netlifyIdentity);
+      netlifyIdentity.init = function (opts) {
+        opts = opts || {};
+        opts.APIUrl = API;
+        return raw(opts);
+      };
+      netlifyIdentity.init({ APIUrl: API });
+    })();
+  </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   <script>
     (function () {
