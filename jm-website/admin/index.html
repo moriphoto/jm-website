@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit — John Mackenzie Ceramics</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      netlifyIdentity.init({ APIUrl: "https://jmceramics.netlify.app/.netlify/identity" });
+    }
+  </script>
   <style>
     #cms-app-btn {
       position: fixed;
