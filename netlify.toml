@@ -6,3 +6,9 @@
   to = "/jm-website/:splat"
   status = 200
   force = true
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://moriphoto.github.io"
+    Access-Control-Allow-Methods = "GET, HEAD, OPTIONS"
