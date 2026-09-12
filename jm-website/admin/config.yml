@@ -32,15 +32,6 @@ collections:
               - { name: src, label: Image, widget: image }
               - { name: archived, label: Archive (hide from public site), widget: boolean, default: false, required: false }
 
-  - name: media
-    label: Media
-    files:
-      - name: stills
-        label: Studio stills panel
-        file: jm-website/data/stills-note.md
-        fields:
-          - { name: body, label: How to send pictures to Stills, widget: markdown }
-
   - name: assets
     label: Assets
     files:

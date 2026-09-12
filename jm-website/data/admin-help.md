@@ -4,30 +4,17 @@
 
 Open https://jmceramics.netlify.app/admin/ and sign in.
 
-## Media / Studio stills
-
-https://jmceramics.netlify.app/admin/stills.html
-
-That panel lists every JPEG already on the site. Tick. Open in Stills. Process. Download 1920 × 1080. Replace the image on the piece in Catalogue. Publish.
-
 ## Catalogue
 
 - 00 is the opening group photograph. Do not delete it.
-- Each pot needs an ID. The next one is the next number: after 21 use 22.
-- Title is the name on the page. Note is the short description. Price is usually On request.
+- Each pot needs an ID. The next one is the next number.
 - Image must already be cropped to 1920 by 1080.
-- Tick Archive to hide a pot from the public viewer. It stays in the list so you can bring it back.
-
-A new firing: change the collection name, archive old pots if needed, add new rows with new IDs and pictures.
+- Tick Archive to hide a pot from the public viewer.
 
 ## Pages
 
-About, Enquire and Courses are text fields. Change the words, Publish, wait one minute, refresh the public site.
+About, Enquire and Courses are text fields. Change the words, Publish once.
 
 ## Publish
 
-Publish writes to GitHub. Netlify rebuilds. Do not Publish dummy test pots on the live catalogue.
-
-## What this panel cannot do
-
-Layout, splash film, colours, new pages. Those come back to James.
+Publish writes to GitHub. Netlify rebuilds. Do not Publish dummy test pots.
