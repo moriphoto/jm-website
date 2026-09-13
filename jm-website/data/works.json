@@ -6,7 +6,8 @@
       "src": "images/hold-collection.jpg",
       "title": "Collection",
       "note": "From the Gweek kiln. Use the arrows to see each piece.",
-      "price": ""
+      "price": "",
+      "archived": false
     },
     {
       "id": "01",
