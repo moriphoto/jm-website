@@ -40,17 +40,16 @@
     @media (max-width: 820px) {
       #cms-brand .nm, #cms-brand .cv { display: none; }
     }
-    /* Pieces editor: small thumbs, not full 1920 stills */
-    [class*="ControlPane"] img,
-    [class*="control"] img,
-    [class*="Preview"] img,
-    [class*="image-card"] img,
-    [class*="ImageWrapper"] img {
-      max-height: 88px !important;
-      max-width: 140px !important;
+    img:not(#cms-brand img) {
+      max-height: 72px !important;
+      max-width: 120px !important;
       width: auto !important;
       object-fit: contain !important;
       background: #111;
+    }
+    .cms-open-piece {
+      outline: 1px solid #c4a35a !important;
+      background: rgba(196,163,90,.12) !important;
     }
   </style>
 </head>
@@ -62,6 +61,7 @@
   </div>
   <script>
     localStorage.setItem("netlifySiteURL", "https://jmceramics.netlify.app");
+    window.CMS_MANUAL_INIT = true;
   </script>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" data-netlify-identity="https://jmceramics.netlify.app/.netlify/identity"></script>
   <script>
@@ -81,6 +81,18 @@
   <script src="preview-works.js"></script>
   <script>
     (function () {
+      var onPages = location.hostname.indexOf("github.io") !== -1;
+      var publicFolder = onPages ? "/jm-website/images" : "/images";
+      var siteUrl = onPages ? (location.origin + "/jm-website") : "https://jmceramics.netlify.app";
+      CMS.init({
+        config: {
+          load_config_file: true,
+          public_folder: publicFolder,
+          site_url: siteUrl,
+          display_url: siteUrl
+        }
+      });
+
       var brand = document.getElementById("cms-brand");
       function show() { if (brand) brand.style.display = "flex"; }
       function hide() { if (brand) brand.style.display = "none"; }
@@ -93,14 +105,57 @@
       setInterval(function () {
         if (document.querySelector("[class*='AppHeader'], header, [class*='Navbar']")) show();
       }, 1500);
-      document.addEventListener("click", function (e) {
-        var img = e.target;
-        if (!img || img.tagName !== "IMG") return;
-        if (img.closest("#cms-brand")) return;
-        var src = img.currentSrc || img.getAttribute("src") || "";
-        if (!src) return;
-        try { localStorage.setItem("cmsFocusSrc", src); } catch (err) {}
-      }, true);
+
+      var ROOT = "https://moriphoto.github.io/jm-website/";
+      function fixImg(img) {
+        if (!img || img.closest("#cms-brand")) return;
+        var s = img.getAttribute("src") || img.currentSrc || "";
+        if (!s || s.indexOf("blob:") === 0) return;
+        var i = s.indexOf("images/");
+        if (i === -1) return;
+        var next = ROOT + s.slice(i);
+        if (img.getAttribute("src") !== next) img.setAttribute("src", next);
+        img.style.maxHeight = "72px";
+        img.style.maxWidth = "120px";
+        img.style.objectFit = "contain";
+      }
+      function fixAll() {
+        document.querySelectorAll("img").forEach(fixImg);
+      }
+      new MutationObserver(fixAll).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["src"] });
+      setInterval(fixAll, 800);
+
+      function openPiece(id, title) {
+        document.querySelectorAll(".cms-open-piece").forEach(function (n) { n.classList.remove("cms-open-piece"); });
+        var want = String(id || "") + " " + String(title || "");
+        var nodes = document.querySelectorAll("button, [role='button'], h4, h3, span, div, label");
+        for (var i = 0; i < nodes.length; i++) {
+          var t = (nodes[i].textContent || "").replace(/\s+/g, " ").trim();
+          if (!t || t.length > 80) continue;
+          var hit = (id && t.indexOf(String(id)) !== -1 && title && t.indexOf(title) !== -1) ||
+                    (title && t === title) ||
+                    (want.trim() && t.indexOf(want.trim()) !== -1);
+          if (!hit) continue;
+          var row = nodes[i].closest("[class*='ListControl']") ||
+                    nodes[i].closest("[class*='NestedObject']") ||
+                    nodes[i].closest("[class*='list-item']") ||
+                    nodes[i].closest("li") ||
+                    nodes[i].parentElement;
+          var btn = nodes[i].closest("button") || nodes[i];
+          try { btn.click(); } catch (e) {}
+          if (row) {
+            row.classList.add("cms-open-piece");
+            row.scrollIntoView({ block: "center", behavior: "smooth" });
+          } else {
+            btn.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
+          return;
+        }
+      }
+      window.addEventListener("message", function (e) {
+        var d = e.data || {};
+        if (d.type === "cms-open-piece") openPiece(d.id, d.title);
+      });
     })();
   </script>
 </body>
