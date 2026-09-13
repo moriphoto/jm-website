@@ -25,14 +25,16 @@ collections:
           - name: pieces
             label: Pieces
             widget: list
-            summary: "{{title}} — {{id}}"
+            collapsed: true
+            minimize_collapsed: true
+            summary: "{{id}}  {{title}}"
             fields:
+              - { name: src, label: Image, widget: image }
               - { name: id, label: ID, widget: string }
               - { name: title, label: Title, widget: string }
               - { name: note, label: Description, widget: text }
               - { name: price, label: Price, widget: string, required: false, default: "On request" }
-              - { name: src, label: Image, widget: image }
-              - { name: archived, label: Archive (hide from public site), widget: boolean, default: false, required: false }
+              - { name: archived, label: Archive (hide from the live collection), widget: boolean, default: false, required: false }
 
   - name: assets
     label: Assets
