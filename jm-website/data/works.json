@@ -2,6 +2,13 @@
   "collection_name": "Gweek 2026",
   "pieces": [
     {
+      "id": "00",
+      "src": "images/hold-collection.jpg",
+      "title": "Collection",
+      "note": "From the Gweek kiln. Use the arrows to see each piece.",
+      "price": ""
+    },
+    {
       "id": "01",
       "src": "images/studio/01-square-vessel.jpg",
       "title": "Square vessel",
@@ -21,13 +28,6 @@
       "title": "Moon jar",
       "note": "Natural ash, flashing and a fused scar from the chamber.",
       "price": "On request"
-    },
-    {
-      "id": "00",
-      "src": "images/hold-collection.jpg",
-      "title": "Collection",
-      "note": "From the Gweek kiln. Use the arrows to see each piece.",
-      "price": ""
     },
     {
       "id": "05",
