@@ -9,13 +9,6 @@
       "price": "On request"
     },
     {
-      "id": "00",
-      "src": "images/hold-collection.jpg",
-      "title": "Collection",
-      "note": "From the Gweek kiln. Use the arrows to see each piece.",
-      "price": ""
-    },
-    {
       "id": "02",
       "src": "images/studio/02-fluted-vessel.jpg",
       "title": "Fluted vessel",
@@ -28,6 +21,13 @@
       "title": "Moon jar",
       "note": "Natural ash, flashing and a fused scar from the chamber.",
       "price": "On request"
+    },
+    {
+      "id": "00",
+      "src": "images/hold-collection.jpg",
+      "title": "Collection",
+      "note": "From the Gweek kiln. Use the arrows to see each piece.",
+      "price": ""
     },
     {
       "id": "05",
