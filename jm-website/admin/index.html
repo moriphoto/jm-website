@@ -17,14 +17,6 @@
       pointer-events: none;
       white-space: nowrap;
     }
-    #cms-brand .nm,
-    #cms-brand .cv {
-      font: 700 10px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-    }
-    #cms-brand .nm { color: #f3f3f3; }
-    #cms-brand .cv { color: #8a4a22; }
     #cms-app-btn {
       pointer-events: auto;
       color: #c4a35a;
@@ -37,9 +29,6 @@
       padding: 9px 16px;
     }
     #cms-app-btn:hover { color: #fff; border-color: #fff; }
-    @media (max-width: 820px) {
-      #cms-brand .nm, #cms-brand .cv { display: none; }
-    }
     img:not(#cms-brand img) {
       max-height: 360px !important;
       max-width: 100% !important;
@@ -56,9 +45,7 @@
 </head>
 <body>
   <div id="cms-brand">
-    <span class="nm">John Mackenzie Ceramics</span>
     <a id="cms-app-btn" href="../studio/">App</a>
-    <span class="cv">Cove</span>
   </div>
   <script>
     localStorage.setItem("netlifySiteURL", "https://jmceramics.netlify.app");
@@ -172,7 +159,43 @@
       window.addEventListener("message", function (e) {
         var d = e.data || {};
         if (d.type === "cms-open-piece") openPiece(d.id, d.title);
+        if (d.type === "cms-bring-back") bringBack(d.id, d.title);
       });
+
+      function uncheckArchiveNear(row) {
+        var scope = row || document;
+        var nodes = scope.querySelectorAll("label, span, div, p");
+        for (var i = 0; i < nodes.length; i++) {
+          var t = (nodes[i].textContent || "").replace(/\s+/g, " ").trim();
+          if (t.indexOf("Archive") === -1) continue;
+          if (t.length > 90) continue;
+          var root = nodes[i].closest("[class*='Control']") || nodes[i].parentElement || nodes[i];
+          var box = root.querySelector("input[type=checkbox]");
+          if (box) {
+            if (box.checked) box.click();
+            return true;
+          }
+          var sw = root.querySelector("[role='switch'], [class*='Toggle'] button, [class*='Toggle']");
+          if (sw) {
+            var on = sw.getAttribute("aria-checked") === "true" || sw.className.indexOf("active") !== -1;
+            if (on) sw.click();
+            else sw.click();
+            return true;
+          }
+        }
+        return false;
+      }
+
+      function bringBack(id, title) {
+        openPiece(id, title);
+        var tries = 0;
+        var tick = setInterval(function () {
+          tries += 1;
+          if (uncheckArchiveNear(document.querySelector(".cms-open-piece")) || tries > 12) {
+            clearInterval(tick);
+          }
+        }, 250);
+      }
     })();
   </script>
 </body>

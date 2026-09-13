@@ -194,7 +194,27 @@
           },
             thumb(p, false),
             h("figcaption", { style: { fontSize: 11, color: "#b0b0b0", marginTop: 6 } }, (p.id || "") + "  " + (p.title || "")),
-            h("div", { style: { color: "#c4a35a", fontSize: 9, letterSpacing: ".12em", textTransform: "uppercase", marginTop: 4 } }, "Bring back — uncheck Archive")
+            h("button", {
+              type: "button",
+              onClick: function (e) {
+                e.stopPropagation();
+                try {
+                  window.parent.postMessage({ type: "cms-bring-back", id: p.id, title: p.title }, "*");
+                } catch (err) {}
+              },
+              style: {
+                marginTop: 8,
+                width: "100%",
+                background: "transparent",
+                color: "#c4a35a",
+                border: "1px solid #c4a35a",
+                font: "700 9px/1 Helvetica Neue, Helvetica, Arial, sans-serif",
+                letterSpacing: ".14em",
+                textTransform: "uppercase",
+                padding: "8px 6px",
+                cursor: "pointer"
+              }
+            }, "Bring back")
           );
         });
 
