@@ -20,6 +20,22 @@
       padding: 9px 14px;
     }
     #cms-back:hover { color: #c4a35a; border-color: #c4a35a; }
+    #cms-netlify {
+      position: fixed;
+      top: 48px;
+      right: 12px;
+      z-index: 100000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.45);
+      background: #0a0a0a;
+      font: 700 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+    #cms-netlify.on { color: #ffb4b4; border-color: #ff5a5a; }
+    #cms-netlify:hover { color: #c4a35a; border-color: #c4a35a; }
     img {
       max-height: 360px !important;
       max-width: 100% !important;
@@ -36,6 +52,7 @@
 </head>
 <body>
   <a id="cms-back" href="../">Back</a>
+  <button id="cms-netlify" type="button">Netlify off</button>
   <script>
     localStorage.setItem("netlifySiteURL", "https://jmceramics.netlify.app");
     window.CMS_MANUAL_INIT = true;
@@ -52,6 +69,67 @@
         return raw(opts);
       };
       netlifyIdentity.init({ APIUrl: API });
+    })();
+  </script>
+  <script>
+    (function () {
+      var GIT = "https://jmceramics.netlify.app/.netlify/git/github";
+      var FLAG = "netlify-deploy.txt";
+      var btn = document.getElementById("cms-netlify");
+      if (!btn) return;
+      function token() {
+        try {
+          var u = window.netlifyIdentity && netlifyIdentity.currentUser();
+          return (u && u.token && u.token.access_token) || "";
+        } catch (e) { return ""; }
+      }
+      function paint(mode) {
+        btn.dataset.mode = mode;
+        btn.classList.toggle("on", mode === "on");
+        btn.textContent = mode === "on" ? "Stop Netlify" : "Netlify off";
+        btn.title = mode === "on"
+          ? "Netlify builds every publish. Tap to stop that."
+          : "Netlify is not building. Tap to allow it again.";
+      }
+      function readFlag() {
+        return fetch("https://raw.githubusercontent.com/moriphoto/jm-website/main/" + FLAG + "?t=" + Date.now())
+          .then(function (r) { return r.ok ? r.text() : "off"; })
+          .then(function (t) { return t.trim() === "on" ? "on" : "off"; })
+          .catch(function () { return "off"; });
+      }
+      function writeFlag(mode) {
+        var t = token();
+        if (!t) {
+          btn.textContent = "Sign in first";
+          return Promise.resolve();
+        }
+        btn.disabled = true;
+        btn.textContent = "Saving…";
+        return fetch(GIT + "/contents/" + FLAG + "?ref=main", {
+          headers: { Authorization: "Bearer " + t }
+        }).then(function (r) { return r.json(); }).then(function (cur) {
+          var body = {
+            message: mode === "off" ? "Stop Netlify auto-deploy." : "Allow Netlify auto-deploy.",
+            content: btoa(mode + "\n"),
+            branch: "main"
+          };
+          if (cur && cur.sha) body.sha = cur.sha;
+          return fetch(GIT + "/contents/" + FLAG, {
+            method: "PUT",
+            headers: { Authorization: "Bearer " + t, "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+        }).then(function (r) {
+          if (!r.ok) throw new Error("save");
+          paint(mode);
+        }).catch(function () {
+          btn.textContent = "Not saved";
+        }).then(function () { btn.disabled = false; });
+      }
+      readFlag().then(paint);
+      btn.onclick = function () {
+        writeFlag(btn.dataset.mode === "on" ? "off" : "on");
+      };
     })();
   </script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>

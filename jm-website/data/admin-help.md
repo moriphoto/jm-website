@@ -19,5 +19,7 @@ About, Enquire and Courses are text fields. Change the words, Publish once.
 
 Saving keeps a draft. The public site does not change.
 Add every picture and correct the words first.
-Press Publish once when the set is ready. That is the only step that goes live.
+Press Publish once when the set is ready. That updates the GitHub site.
+Netlify auto-deploy is off. The button on the admin says Netlify off.
+Tap Stop Netlify if it ever says that. Tap Netlify off only when you want Netlify to build again.
 A later correction is another Publish. Do not Publish dummy test pots.
