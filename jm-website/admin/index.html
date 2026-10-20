@@ -17,6 +17,21 @@
       pointer-events: none;
       white-space: nowrap;
     }
+    #cms-back {
+      position: fixed;
+      top: 10px;
+      right: 12px;
+      z-index: 100000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.45);
+      background: #0a0a0a;
+      text-decoration: none;
+      font: 700 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      padding: 9px 14px;
+    }
+    #cms-back:hover { color: #c4a35a; border-color: #c4a35a; }
     #cms-app-btn {
       pointer-events: auto;
       color: #c4a35a;
@@ -44,6 +59,7 @@
   </style>
 </head>
 <body>
+  <a id="cms-back" href="../">Back</a>
   <div id="cms-brand">
     <a id="cms-app-btn" href="../studio/">App</a>
   </div>
