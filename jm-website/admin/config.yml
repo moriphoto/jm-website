@@ -1,8 +1,11 @@
 backend:
   name: git-gateway
   branch: main
+  squash_merges: true
   identity_url: https://jmceramics.netlify.app/.netlify/identity
   gateway_url: https://jmceramics.netlify.app/.netlify/git
+
+publish_mode: editorial_workflow
 
 media_folder: jm-website/images
 public_folder: /images

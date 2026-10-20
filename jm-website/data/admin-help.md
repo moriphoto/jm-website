@@ -15,6 +15,9 @@ Open https://jmceramics.netlify.app/admin/ and sign in.
 
 About, Enquire and Courses are text fields. Change the words, Publish once.
 
-## Publish
+## Draft, then publish
 
-Publish writes to GitHub. Netlify rebuilds. Do not Publish dummy test pots.
+Saving keeps a draft. The public site does not change.
+Add every picture and correct the words first.
+Press Publish once when the set is ready. That is the only step that goes live.
+A later correction is another Publish. Do not Publish dummy test pots.
