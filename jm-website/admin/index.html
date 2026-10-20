@@ -5,18 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Edit — John Mackenzie Ceramics</title>
   <style>
-    #cms-brand {
-      position: fixed;
-      top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 99999;
-      display: none;
-      align-items: center;
-      gap: 16px;
-      pointer-events: none;
-      white-space: nowrap;
-    }
     #cms-back {
       position: fixed;
       top: 10px;
@@ -32,19 +20,7 @@
       padding: 9px 14px;
     }
     #cms-back:hover { color: #c4a35a; border-color: #c4a35a; }
-    #cms-app-btn {
-      pointer-events: auto;
-      color: #c4a35a;
-      border: 1px solid #c4a35a;
-      background: #0a0a0a;
-      text-decoration: none;
-      font: 700 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      padding: 9px 16px;
-    }
-    #cms-app-btn:hover { color: #fff; border-color: #fff; }
-    img:not(#cms-brand img) {
+    img {
       max-height: 360px !important;
       max-width: 100% !important;
       width: auto !important;
@@ -60,9 +36,6 @@
 </head>
 <body>
   <a id="cms-back" href="../">Back</a>
-  <div id="cms-brand">
-    <a id="cms-app-btn" href="../studio/">App</a>
-  </div>
   <script>
     localStorage.setItem("netlifySiteURL", "https://jmceramics.netlify.app");
     window.CMS_MANUAL_INIT = true;
@@ -97,22 +70,9 @@
         }
       });
 
-      var brand = document.getElementById("cms-brand");
-      function show() { if (brand) brand.style.display = "flex"; }
-      function hide() { if (brand) brand.style.display = "none"; }
-      hide();
-      if (window.netlifyIdentity) {
-        netlifyIdentity.on("init", function (user) { if (user) show(); else hide(); });
-        netlifyIdentity.on("login", show);
-        netlifyIdentity.on("logout", hide);
-      }
-      setInterval(function () {
-        if (document.querySelector("[class*='AppHeader'], header, [class*='Navbar']")) show();
-      }, 1500);
-
       var ROOT = "https://moriphoto.github.io/jm-website/";
       function fixImg(img) {
-        if (!img || img.closest("#cms-brand")) return;
+        if (!img) return;
         var s = img.getAttribute("src") || img.currentSrc || "";
         if (!s || s.indexOf("blob:") === 0) return;
         var i = s.indexOf("images/");
