@@ -149,15 +149,24 @@
       });
 
       var ROOT = "https://moriphoto.github.io/jm-website/";
+      var DRAFT = "https://raw.githubusercontent.com/moriphoto/jm-website/cms/catalogue/works/jm-website/";
       function fixImg(img) {
         if (!img) return;
         var s = img.getAttribute("src") || img.currentSrc || "";
-        if (!s || s.indexOf("blob:") === 0) return;
+        if (!s || s.indexOf("blob:") === 0 || s.indexOf("raw.githubusercontent.com") !== -1) return;
         var i = s.indexOf("images/");
-        var next = "";
-        if (i !== -1) next = ROOT + s.slice(i);
-        else if (s.indexOf("studio/") !== -1) next = ROOT + "images/" + s.slice(s.indexOf("studio/"));
-        if (next && img.getAttribute("src") !== next) img.setAttribute("src", next);
+        var rel = "";
+        if (i !== -1) rel = s.slice(i);
+        else if (s.indexOf("studio/") !== -1) rel = "images/" + s.slice(s.indexOf("studio/"));
+        if (!rel) return;
+        var next = ROOT + rel;
+        if (img.getAttribute("src") !== next) img.setAttribute("src", next);
+        if (img.dataset.draft) return;
+        img.dataset.draft = "1";
+        img.addEventListener("error", function () {
+          var name = rel.split("/").pop();
+          if (name) img.src = DRAFT + "images/" + name;
+        });
       }
       function fixAll() {
         document.querySelectorAll("img").forEach(fixImg);

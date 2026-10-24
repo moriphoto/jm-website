@@ -9,6 +9,7 @@
     var createClass = window.createClass;
     var ROOT = "https://moriphoto.github.io/jm-website/";
     var RAW = "https://raw.githubusercontent.com/moriphoto/jm-website/main/jm-website/";
+    var DRAFT = "https://raw.githubusercontent.com/moriphoto/jm-website/cms/catalogue/works/jm-website/";
 
     function asString(v) {
       if (!v) return "";
@@ -43,13 +44,14 @@
       var n = parseInt(el.getAttribute("data-try") || "0", 10);
       var f = fileName(src);
       var list = [
+        DRAFT + "images/" + f,
         imgUrl(src),
-        ROOT + "images/studio/" + f,
         ROOT + "images/" + f,
-        RAW + "images/studio/" + f,
         RAW + "images/" + f,
-        "https://jmceramics.netlify.app/images/studio/" + f,
-        "https://jmceramics.netlify.app/images/" + f
+        ROOT + "images/studio/" + f,
+        RAW + "images/studio/" + f,
+        "https://jmceramics.netlify.app/images/" + f,
+        "https://jmceramics.netlify.app/images/studio/" + f
       ];
       n += 1;
       while (n < list.length && (!list[n] || list[n] === el.getAttribute("src"))) n += 1;
