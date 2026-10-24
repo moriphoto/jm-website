@@ -157,6 +157,14 @@
       "title": "Two plates",
       "note": "Hakeme and iron on a pale ground.",
       "price": "On request"
+    },
+    {
+      "price": "On request",
+      "archived": false,
+      "src": "/jm-website/images/whatsapp-image-2026-10-24-at-14.17.45-1920x1080.jpg",
+      "id": "22",
+      "title": "test pot ",
+      "note": "Upload test "
     }
   ]
 }
